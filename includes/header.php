@@ -2,7 +2,7 @@
     <div class="container">
         <div class="header-content">
             <div class="logo">
-                <a href="<?php echo isAdmin() ? '../index.php' : 'index.php'; ?>">Personal Blog</a>
+                <a href="<?php echo isAdmin() ? '../index.php' : 'index.php'; ?>">✨ Personal Blog</a>
             </div>
             
             <nav class="main-nav">
