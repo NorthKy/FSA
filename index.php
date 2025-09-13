@@ -85,6 +85,11 @@ $posts = $post->getPublishedPosts(getUserId(), 10, 0);
         <!-- Posts Section -->
         <section class="posts-section">
             <div class="container">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <h2 style="font-size: 2.5rem; color: #f1f5f9; margin-bottom: 1rem; font-weight: 700;">Latest Stories</h2>
+                    <p style="color: #94a3b8; font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Explore the latest posts from our community of passionate writers and storytellers.</p>
+                </div>
+                
                 <div class="posts-grid">
                     <?php if(empty($posts)): ?>
                         <div class="no-posts">
