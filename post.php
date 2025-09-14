@@ -28,7 +28,19 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
         if(isset($_POST['action'])) {
             $action = $_POST['action'];
             
-            if($action === 'edit_comment') {
+            if($action === 'delete_post') {
+                $post_id = (int)$_POST['post_id'];
+                if($post->canUserEdit($post_id, getUserId()) || isAdmin()) {
+                    $post->delete($post_id);
+                    redirect('index.php');
+                }
+            } elseif($action === 'delete_comment') {
+                $comment_id = (int)$_POST['comment_id'];
+                if($comment->canUserEdit($comment_id, getUserId()) || isAdmin()) {
+                    $comment->delete($comment_id);
+                    redirect("post.php?id=$post_id#comments");
+                }
+            } elseif($action === 'edit_comment') {
                 $comment_id = (int)$_POST['comment_id'];
                 $content = sanitizeInput($_POST['content']);
                 
@@ -57,11 +69,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
                     }
                     
                     $comment->update($comment_id, $content, $media_file);
-                }
-            } elseif($action === 'delete_comment') {
-                $comment_id = (int)$_POST['comment_id'];
-                if($comment->canUserEdit($comment_id, getUserId())) {
-                    $comment->delete($comment_id);
                 }
             }
         } else {
@@ -136,6 +143,14 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
                                 <div class="edit-delete-actions">
                                     <a href="edit-post.php?id=<?php echo $post_data['id']; ?>" class="btn btn-edit">Edit</a>
                                     <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?')">
+                                        <input type="hidden" name="action" value="delete_post">
+                                        <input type="hidden" name="post_id" value="<?php echo $post_data['id']; ?>">
+                                        <button type="submit" class="btn btn-delete">Delete</button>
+                                    </form>
+                                </div>
+                            <?php elseif(isAdmin()): ?>
+                                <div class="edit-delete-actions">
+                                    <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?'); setTimeout(function(){ window.location.href='index.php'; }, 100);">
                                         <input type="hidden" name="action" value="delete_post">
                                         <input type="hidden" name="post_id" value="<?php echo $post_data['id']; ?>">
                                         <button type="submit" class="btn btn-delete">Delete</button>
@@ -243,21 +258,12 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
                                     <?php if(isLoggedIn() && ($comment_item['user_id'] == getUserId() || isAdmin())): ?>
                                         <div class="edit-delete-actions">
                                             <?php if($comment_item['user_id'] == getUserId()): ?>
-                                            <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?'); setTimeout(function(){ window.location.href='index.php'; }, 100);">
-                                            <?php endif; ?>
                                             <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this comment?'); setTimeout(function(){ location.reload(); }, 100);">
                                                 <input type="hidden" name="action" value="delete_comment">
                                                 <input type="hidden" name="comment_id" value="<?php echo $comment_item['id']; ?>">
                                                 <button type="submit" class="btn btn-delete">Delete</button>
                                             </form>
-                                        </div>
-                                    <?php elseif(isLoggedIn() && isAdmin()): ?>
-                                        <div class="edit-delete-actions">
-                                            <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?'); setTimeout(function(){ window.location.href='index.php'; }, 100);">
-                                                <input type="hidden" name="action" value="delete_post">
-                                                <input type="hidden" name="post_id" value="<?php echo $post_data['id']; ?>">
-                                                <button type="submit" class="btn btn-delete">Delete</button>
-                                            </form>
+                                            <?php endif; ?>
                                         </div>
                                     <?php elseif(isLoggedIn()): ?>
                                     <button onclick="reportContent('comment', <?php echo $comment_item['id']; ?>)" class="btn btn-report btn-sm">Report</button>
