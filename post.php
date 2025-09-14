@@ -258,12 +258,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
                                     <?php if(isLoggedIn() && ($comment_item['user_id'] == getUserId() || isAdmin())): ?>
                                         <div class="edit-delete-actions">
                                             <?php if($comment_item['user_id'] == getUserId()): ?>
+                                                <button onclick="editComment(<?php echo $comment_item['id']; ?>)" class="btn btn-edit">Edit</button>
+                                            <?php endif; ?>
                                             <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this comment?'); setTimeout(function(){ location.reload(); }, 100);">
                                                 <input type="hidden" name="action" value="delete_comment">
                                                 <input type="hidden" name="comment_id" value="<?php echo $comment_item['id']; ?>">
                                                 <button type="submit" class="btn btn-delete">Delete</button>
                                             </form>
-                                            <?php endif; ?>
                                         </div>
                                     <?php elseif(isLoggedIn()): ?>
                                     <button onclick="reportContent('comment', <?php echo $comment_item['id']; ?>)" class="btn btn-report btn-sm">Report</button>

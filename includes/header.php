@@ -1,10 +1,16 @@
 <?php
 require_once (strpos($_SERVER['PHP_SELF'], 'admin') !== false ? '../classes/Notification.php' : 'classes/Notification.php');
 require_once (strpos($_SERVER['PHP_SELF'], 'admin') !== false ? '../classes/User.php' : 'classes/User.php');
+require_once (strpos($_SERVER['PHP_SELF'], 'admin') !== false ? '../classes/User.php' : 'classes/User.php');
 
 if(isLoggedIn()) {
     $notification = new Notification($db);
     $unread_count = $notification->getUnreadCount(getUserId());
+    
+    // Get user avatar
+    $user = new User($db);
+    $user_data = $user->getUserById(getUserId());
+    $user_avatar = $user_data['avatar'] ?? 'default-avatar.png';
     
     // Get user avatar
     $user = new User($db);
@@ -70,7 +76,7 @@ if(isLoggedIn()) {
                             <?php if($_SESSION['status'] === 'limited'): ?>
                                 <span class="status-badge status-limited">Limited</span>
                             <?php endif; ?>
-                            <a href="<?php echo isAdmin() ? '../auth/logout.php' : 'auth/logout.php'; ?>" class="logout-btn">Logout</a>
+                            <button onclick="window.location.href='<?php echo isAdmin() ? '../auth/logout.php' : 'auth/logout.php'; ?>'" class="logout-btn">Logout</button>
                         </div>
                     </div>
                 <?php else: ?>
