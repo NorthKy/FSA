@@ -227,7 +227,7 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero-title {
-        font-size: 2rem;
+        font-size: 6rem;
     }
     
     .hero-description {
@@ -248,14 +248,14 @@
 
 @media (min-width: 640px) {
     .hero-title {
-        font-size: 2rem; 
+        font-size: 5rem; 
     }
     .hero-content { padding: 0 1.5rem; }
 }
 
 @media (min-width: 768px) {
     .hero-title {
-        font-size: 2rem; 
+        font-size: 6rem; 
     }
     .hero-badge { margin-bottom: 3rem; }
     .hero-description { font-size: 1.25rem; }

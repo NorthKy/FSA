@@ -10,7 +10,15 @@ if(!isLoggedIn()) {
     redirect('auth/login.php');
 }
 
-if($_SESSION['status'] === 'limited') {
+if(!isset($_GET['id'])) {
+    redirect('index.php');
+}
+
+$post_id = (int)$_GET['id'];
+$post = new Post($db);
+$post_data = $post->getPostById($post_id);
+
+if(!$post_data || !$post->canUserEdit($post_id, getUserId())) {
     redirect('index.php');
 }
 
@@ -28,7 +36,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif(strlen($content) > 3000) {
         $error = 'Content must be 3000 characters or less';
     } else {
-        $media_file = null;
+        $media_file = $post_data['media_file']; // Keep existing media by default
         
         // Handle media upload
         if(isset($_FILES['media']) && $_FILES['media']['error'] === UPLOAD_ERR_OK) {
@@ -36,7 +44,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_type = $_FILES['media']['type'];
             $file_size = $_FILES['media']['size'];
             
-            if($file_size > 10 * 1024 * 1024) { // 10MB limit
+            if($file_size > 10 * 1024 * 1024) {
                 $error = 'File size must be less than 10MB';
             } elseif(in_array($file_type, $allowed_types)) {
                 $file_extension = pathinfo($_FILES['media']['name'], PATHINFO_EXTENSION);
@@ -48,24 +56,26 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 if(move_uploaded_file($_FILES['media']['tmp_name'], $upload_path)) {
+                    // Delete old media file if exists
+                    if($post_data['media_file'] && file_exists('assets/media/' . $post_data['media_file'])) {
+                        unlink('assets/media/' . $post_data['media_file']);
+                    }
                     $media_file = $new_filename;
                 } else {
                     $error = 'Failed to upload media file';
                 }
             } else {
-                $error = 'Invalid file type. Only images, videos, and audio files are allowed';
+                $error = 'Invalid file type';
             }
         }
         
         if(!$error) {
-        $post = new Post($db);
-            if($post->createWithMedia(getUserId(), $title, $content, $media_file)) {
-            $success = 'Post submitted for review. It will be published after admin approval.';
-                // Clear form data
-                $_POST = array();
-        } else {
-            $error = 'Failed to create post. Please try again.';
-        }
+            if($post->update($post_id, $title, $content, $media_file)) {
+                $success = 'Post updated successfully! It will be reviewed by admin before being published.';
+                $post_data = $post->getPostById($post_id); // Refresh data
+            } else {
+                $error = 'Failed to update post';
+            }
         }
     }
 }
@@ -76,7 +86,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Post - Personal Blog</title>
+    <title>Edit Post - Personal Blog</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/hero.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -87,7 +97,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="main-content">
         <div class="container">
             <div class="create-post-container">
-                <h1>Create New Post</h1>
+                <h1>Edit Post</h1>
                 
                 <?php if($error): ?>
                     <div class="alert alert-error"><?php echo $error; ?></div>
@@ -100,8 +110,8 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <form method="POST" class="post-form">
                     <div class="form-group">
                         <label for="title">Post Title</label>
-                        <input type="text" id="title" name="title" required 
-                                   value="<?php echo !$success && isset($_POST['title']) ? htmlspecialchars($_POST['title']) : ''; ?>"
+                            <input type="text" id="title" name="title" required 
+                                   value="<?php echo htmlspecialchars($post_data['title']); ?>"
                                    maxlength="100">
                             <div class="char-counter">
                                 <span id="title-count">0</span>/100 characters
@@ -170,15 +180,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </svg>
                             </button>
                             </div>
-                            <textarea id="content" name="content" rows="15" required maxlength="3000"><?php echo !$success && isset($_POST['content']) ? htmlspecialchars($_POST['content']) : ''; ?></textarea>
+                            <textarea id="content" name="content" rows="15" required maxlength="3000"><?php echo htmlspecialchars($post_data['content']); ?></textarea>
                             <div class="char-counter">
                                 <span id="content-count">0</span>/3000 characters
                             </div>
                     </div>
                     
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Submit for Review</button>
-                        <a href="index.php" class="btn btn-outline">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Post</button>
+                        <a href="post.php?id=<?php echo $post_id; ?>" class="btn btn-outline">Cancel</a>
                     </div>
                 </form>
             </div>
@@ -188,7 +198,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include 'includes/footer.php'; ?>
     
     <script src="assets/js/bbcode.js"></script>
-    <script src="assets/js/time-ago.js"></script>
     <script>
         // Character counters
         document.getElementById('title').addEventListener('input', function() {

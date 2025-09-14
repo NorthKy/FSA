@@ -13,6 +13,21 @@ class Comment {
         return $stmt->execute([$post_id, $user_id, $content]);
     }
 
+    public function createWithMedia($post_id, $user_id, $content) {
+        $query = "INSERT INTO " . $this->table_name . " (post_id, user_id, content) VALUES (?, ?, ?)";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$post_id, $user_id, $content]);
+    }
+
+    public function update($id, $content) {
+        // When updating, set status back to pending for admin review
+        $query = "UPDATE " . $this->table_name . " 
+                  SET content = ?, status = 'pending', updated_at = NOW() 
+                  WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$content, $id]);
+    }
+
     public function getPostComments($post_id) {
         $query = "SELECT c.*, u.username, u.avatar 
                   FROM " . $this->table_name . " c 
@@ -54,6 +69,15 @@ class Comment {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([$id]);
+    }
+
+    public function canUserEdit($comment_id, $user_id) {
+        $query = "SELECT user_id FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$comment_id]);
+        $comment = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $comment && $comment['user_id'] == $user_id;
     }
 }
 ?>

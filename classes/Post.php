@@ -18,6 +18,57 @@ class Post {
     ]);
     }
 
+    public function createWithMedia($user_id, $title, $content) {
+        $query = "INSERT INTO posts (user_id, title, content, status) 
+                  VALUES (:user_id, :title, :content, 'draft')";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([
+            ':user_id' => $user_id,
+            ':title' => $title,
+            ':content' => $content
+        ]);
+    }
+
+    public function getTotalPublishedPosts($user_id) {
+        if ($user_id === null) {
+            $query = "SELECT COUNT(*) as total 
+                      FROM " . $this->table_name . " p
+                      JOIN users u ON p.user_id = u.id
+                      WHERE p.status = 'published' 
+                        AND u.status != 'banned'";
+            
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+        } else {
+            $query = "SELECT COUNT(*) as total 
+                      FROM " . $this->table_name . " p
+                      JOIN users u ON p.user_id = u.id
+                      LEFT JOIN reports r 
+                        ON r.reported_type = 'post' 
+                       AND r.reported_id = p.id 
+                       AND r.reporter_id = :user_id
+                      WHERE p.status = 'published' 
+                        AND u.status != 'banned'
+                        AND r.id IS NULL";
+            
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+        }
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
+    }
+
+    public function update($id, $title, $content) {
+        // When updating, set status back to draft for admin review
+        $query = "UPDATE " . $this->table_name . " 
+                  SET title = ?, content = ?, status = 'draft', updated_at = NOW() 
+                  WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$title, $content, $id]);
+    }
+
 public function getPublishedPosts($user_id, $limit = 10, $offset = 0) {
     // Handle case when user is not logged in
     if ($user_id === null) {
@@ -121,6 +172,15 @@ public function getPendingPosts() {
         $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([$id]);
+    }
+
+    public function canUserEdit($post_id, $user_id) {
+        $query = "SELECT user_id FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$post_id]);
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $post && $post['user_id'] == $user_id;
     }
 }
 ?>
