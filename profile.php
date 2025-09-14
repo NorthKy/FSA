@@ -194,7 +194,7 @@ if($is_limited && !$is_own_profile && !isAdmin()) {
         <?php if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_post' && $is_own_profile): ?>
             <?php
             $post_id = (int)$_POST['post_id'];
-            if($post->canUserEdit($post_id, getUserId())) {
+            if($post->canUserEdit($post_id, getUserId()) || isAdmin()) {
                 $post->delete($post_id);
                 echo "window.location.reload();";
             }
