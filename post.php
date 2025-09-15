@@ -173,10 +173,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
                     $content = preg_replace('/\[u\](.*?)\[\/u\]/i', '<u>$1</u>', $content);
                     $content = preg_replace('/\[url=(.*?)\](.*?)\[\/url\]/i', '<a href="$1" target="_blank" rel="noopener">$2</a>', $content);
                     $content = preg_replace('/\[url\](.*?)\[\/url\]/i', '<a href="$1" target="_blank" rel="noopener">$1</a>', $content);
-                    $content = preg_replace('/\[img\](.*?)\[\/img\]/i', '<img src="$1" alt="Image" style="max-width: 100%; height: auto; border-radius: 8px;">', $content);
+                    $content = preg_replace('/\[img\](.*?)\[\/img\]/i', '<img src="$1" alt="Image" style="max-width: 100%; max-height: 400px; height: auto; border-radius: 8px; object-fit: contain;">', $content);
                     $content = preg_replace('/\[h1\](.*?)\[\/h1\]/i', '<h1>$1</h1>', $content);
                     $content = preg_replace('/\[h2\](.*?)\[\/h2\]/i', '<h2>$1</h2>', $content);
                     $content = preg_replace('/\[h3\](.*?)\[\/h3\]/i', '<h3>$1</h3>', $content);
+                    $content = preg_replace('/\[centre\](.*?)\[\/centre\]/i', '<div class="bbcode-center">$1</div>', $content);
+                    $content = preg_replace('/\[center\](.*?)\[\/center\]/i', '<div class="bbcode-center">$1</div>', $content);
+                    $content = preg_replace('/\[box\](.*?)\[\/box\]/i', '<div class="bbcode-box">$1</div>', $content);
+                    $content = preg_replace('/\[color=(.*?)\](.*?)\[\/color\]/i', '<span style="color: $1;">$2</span>', $content);
+                    $content = preg_replace('/\[notice\](.*?)\[\/notice\]/i', '<div class="bbcode-notice">$1</div>', $content);
                     $content = nl2br($content);
                     echo $content;
                     ?>
@@ -282,10 +287,15 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
                                 $content = preg_replace('/\[u\](.*?)\[\/u\]/i', '<u>$1</u>', $content);
                                 $content = preg_replace('/\[url=(.*?)\](.*?)\[\/url\]/i', '<a href="$1" target="_blank" rel="noopener">$2</a>', $content);
                                 $content = preg_replace('/\[url\](.*?)\[\/url\]/i', '<a href="$1" target="_blank" rel="noopener">$1</a>', $content);
-                                $content = preg_replace('/\[img\](.*?)\[\/img\]/i', '<img src="$1" alt="Image" style="max-width: 100%; height: auto; border-radius: 8px;">', $content);
+                                $content = preg_replace('/\[img\](.*?)\[\/img\]/i', '<img src="$1" alt="Image" style="max-width: 100%; max-height: 400px; height: auto; border-radius: 8px; object-fit: contain;">', $content);
                                 $content = preg_replace('/\[h1\](.*?)\[\/h1\]/i', '<h1>$1</h1>', $content);
                                 $content = preg_replace('/\[h2\](.*?)\[\/h2\]/i', '<h2>$1</h2>', $content);
                                 $content = preg_replace('/\[h3\](.*?)\[\/h3\]/i', '<h3>$1</h3>', $content);
+                                $content = preg_replace('/\[centre\](.*?)\[\/centre\]/i', '<div class="bbcode-center">$1</div>', $content);
+                                $content = preg_replace('/\[center\](.*?)\[\/center\]/i', '<div class="bbcode-center">$1</div>', $content);
+                                $content = preg_replace('/\[box\](.*?)\[\/box\]/i', '<div class="bbcode-box">$1</div>', $content);
+                                $content = preg_replace('/\[color=(.*?)\](.*?)\[\/color\]/i', '<span style="color: $1;">$2</span>', $content);
+                                $content = preg_replace('/\[notice\](.*?)\[\/notice\]/i', '<div class="bbcode-notice">$1</div>', $content);
                                 $content = nl2br($content);
                                 echo $content;
                                 ?>

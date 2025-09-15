@@ -115,6 +115,11 @@ public function getUserById($id) {
             if ($title && $message && $type) {
                 $notification->create($id, $type, $title, $message);
             }
+            
+            // Update session if limiting current user
+            if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $id) {
+                $_SESSION['status'] = $status;
+            }
         }
         
         return $result;

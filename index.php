@@ -115,7 +115,7 @@ $has_more = ($offset + $posts_per_page) < $total_posts;
                                              class="avatar">
                                         <div>
                                             <h4><?php echo htmlspecialchars($post_item['username']); ?></h4>
-                                            <time><?php echo formatDate($post_item['created_at']); ?></time>
+                                           <time class="time-ago" data-datetime="<?php echo $post_item['created_at']; ?>" title="<?php echo formatDate($post_item['created_at']); ?>"></time>
                                         </div>
                                     </div>
                                 </div>
@@ -127,7 +127,36 @@ $has_more = ($offset + $posts_per_page) < $total_posts;
                                 </h2>
                                 
                                 <div class="post-excerpt">
-                                    <?php echo substr(strip_tags($post_item['content']), 0, 200) . '...'; ?>
+                                    <?php 
+                                    // Parse BBCode for preview and limit to 40-50 words
+                                    $content = $post_item['content'];
+                                    // Remove BBCode tags for preview
+                                    $content = preg_replace('/\[img\](.*?)\[\/img\]/gi', '[Image]', $content);
+                                    $content = preg_replace('/\[b\](.*?)\[\/b\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[i\](.*?)\[\/i\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[u\](.*?)\[\/u\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[url=(.*?)\](.*?)\[\/url\]/gi', '$2', $content);
+                                    $content = preg_replace('/\[url\](.*?)\[\/url\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[h[1-3]\](.*?)\[\/h[1-3]\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[centre\](.*?)\[\/centre\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[center\](.*?)\[\/center\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[box\](.*?)\[\/box\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[color=(.*?)\](.*?)\[\/color\]/gi', '$2', $content);
+                                    $content = preg_replace('/\[notice\](.*?)\[\/notice\]/gi', '$1', $content);
+                                    $content = preg_replace('/\[ul\](.*?)\[\/ul\]/gis', '$1', $content);
+                                    $content = preg_replace('/\[ol\](.*?)\[\/ol\]/gis, '$1', $content);
+                                    $content = preg_replace('/\[li\](.*?)\[\/li\]/gi', '• $1', $content);
+                                    $content = strip_tags($content);
+                                    
+                                    // Limit to 40-50 words
+                                    $words = explode(' ', $content);
+                                    if (count($words) > 45) {
+                                        $words = array_slice($words, 0, 45);
+                                        echo implode(' ', $words) . '...';
+                                    } else {
+                                        echo $content;
+                                    }
+                                    ?>
                                 </div>
                                 
                                 <div class="post-actions">

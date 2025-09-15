@@ -27,7 +27,7 @@ $is_limited = $profile_data['status'] === 'limited' || $profile_data['status'] =
 $is_own_profile = isLoggedIn() && getUserId() == $profile_id;
 
 // Limited/banned profiles should be inaccessible to others
-if($is_limited && !$is_own_profile && !isAdmin()) {
+if(($profile_data['status'] === 'limited' || $profile_data['status'] === 'banned') && !$is_own_profile && !isAdmin()) {
     $access_denied = true;
 } else {
     $access_denied = false;

@@ -424,16 +424,20 @@ body {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    height: 350px;
+    display: flex;
+    flex-direction: column;
 }
 
 .post-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.4);
+    border-color: rgba(139, 92, 246, 0.5);
 }
 
 .post-header {
     margin-bottom: 1rem;
+    flex-shrink: 0;
 }
 
 .author-info {
@@ -467,6 +471,7 @@ body {
 
 .post-title {
     margin: 1rem 0;
+    flex-shrink: 0;
 }
 
 .post-title a {
@@ -485,12 +490,53 @@ body {
     color: #94a3b8;
     margin-bottom: 1rem;
     line-height: 1.6;
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 
 .post-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+/* BBCode Styles for Post Content */
+.post-content img,
+.comment-content img,
+.post-excerpt img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 0.5rem 0;
+}
+
+.post-content .bbcode-center,
+.comment-content .bbcode-center {
+    text-align: center;
+}
+
+.post-content .bbcode-box,
+.comment-content .bbcode-box {
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.post-content .bbcode-notice,
+.comment-content .bbcode-notice {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 4px solid #6366f1;
 }
 
 /* Full Post Styles */
@@ -521,8 +567,47 @@ body {
 
 .post-date-small,
 .comment-date-small {
-    font-size: 0.8rem !important;
+    font-size: 0.75rem !important;
     color: #94a3b8 !important;
+    cursor: help;
+}
+
+/* Time Display */
+.time-ago {
+    font-size: 0.75rem !important;
+    color: #64748b !important;
+    cursor: help;
+}
+
+.post-date-small,
+.comment-date-small {
+    font-size: 0.75rem !important;
+    color: #64748b !important;
+}
+
+/* Custom Scrollbar for Notifications */
+.notification-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.6);
+    border-radius: 3px;
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.8);
+}
+
+/* Firefox scrollbar */
+.notification-list {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.6) rgba(15, 23, 42, 0.5);
 }
 
 /* BBCode Editor Toolbar */
@@ -632,18 +717,6 @@ body {
 }
 
 /* Time Display */
-.time-ago {
-    font-size: 0.75rem !important;
-    color: #64748b !important;
-    cursor: help;
-}
-
-.post-date-small,
-.comment-date-small {
-    font-size: 0.75rem !important;
-    color: #64748b !important;
-}
-
 /* Profile Posts Redesign */
 .profile-posts-list {
     display: flex;
