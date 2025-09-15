@@ -56,9 +56,6 @@ if($is_limited && !$is_own_profile && !isAdmin()) {
                     <a href="index.php" class="btn btn-primary">← Back to Home</a>
                 </div>
             <?php else: ?>
-                <div class="profile-banner">
-                    <img src="assets/images/banners/<?php echo htmlspecialchars($profile_data['banner'] ?? 'default-banner.jpg'); ?>" alt="Profile Banner">
-                </div>
                 
                 <?php if($is_limited && $is_own_profile): ?>
                     <div class="profile-restricted">
