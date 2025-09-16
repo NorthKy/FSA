@@ -35,6 +35,7 @@ public function getUserById($id) {
     $query = "SELECT u.id, u.username, u.email, u.role, u.status, 
                      u.created_at, u.avatar,
                      COALESCE(u.gender, 'prefer_not_to_say') AS gender,
+                     COALESCE(u.description, 'Nothing here~') AS description,
                      COUNT(DISTINCT p.id) AS total_posts,
                      COUNT(DISTINCT c.id) AS total_comments
               FROM users u

@@ -121,6 +121,14 @@ function insertBBCode(elementId, tag, hasClosing = true) {
         case 'li':
             insertText = `[li]${selectedText}[/li]`;
             break;
+        case 'color':
+            const color = prompt('Enter color (e.g., #ff0000, red):');
+            if (color) {
+                insertText = `[color=${color}]${selectedText}[/color]`;
+            } else {
+                return;
+            }
+            break;
         default:
             insertText = selectedText;
     }

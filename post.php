@@ -325,6 +325,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isLoggedIn()) {
     
     <script src="assets/js/bbcode.js"></script>
     <script src="assets/js/time-ago.js"></script>
+    <script src="assets/js/main.js"></script>
     <script>
         // Character counter for comment
         document.getElementById('comment-content').addEventListener('input', function() {

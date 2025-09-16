@@ -298,6 +298,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
     
     <script src="../assets/js/admin.js"></script>
+    <script src="../assets/js/main.js"></script>
     <script>
         function showPostDetails(id, title, content, author, date) {
             document.getElementById('modalTitle').textContent = 'Post Details';
