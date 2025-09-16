@@ -75,6 +75,12 @@
     font-size: 2rem;
 }
 
+/* Space*/
+.spacer {
+    margin-top: 0.5rem; /* adjust as needed */
+}
+
+
 /* Stats Grid */
 .stats-grid {
     display: grid;
@@ -254,6 +260,8 @@
     overflow-y: auto;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.6) rgba(15, 23, 42, 0.5);
 }
 
 .modal-header {

@@ -175,7 +175,7 @@ public function getUserPosts($profile_id, $viewer_id = null) {
     }
 
 public function getPendingPosts() {
-    $query = "SELECT p.*, u.username 
+    $query = "SELECT p.*, u.username, u.avatar 
               FROM posts p 
               JOIN users u ON p.user_id = u.id 
               WHERE p.status = 'draft'

@@ -28,18 +28,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Auto-submit forms when select changes
-    const autoSubmitSelects = document.querySelectorAll('select[onchange*="submit"]');
-    autoSubmitSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            if (confirm('Are you sure you want to change this user\'s status?')) {
+        const autoSubmitSelects = document.querySelectorAll("select[name='user_status']");
+        autoSubmitSelects.forEach(select => {
+        const originalValue = select.value; // store current
+        select.addEventListener("change", function() {
+            if (confirm("Are you sure you want to change this user's status?")) {
                 this.form.submit();
             } else {
-                // Reset to original value
-                this.selectedIndex = 0;
+                this.value = originalValue; // revert to before
             }
         });
     });
-    
+
     // Confirmation for report actions
     const reportForms = document.querySelectorAll('form[action*="report"]');
     reportForms.forEach(form => {

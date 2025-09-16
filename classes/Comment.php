@@ -8,50 +8,50 @@ class Comment {
     }
 
     public function create($post_id, $user_id, $content) {
-        $query = "INSERT INTO " . $this->table_name . " (post_id, user_id, content) VALUES (?, ?, ?)";
-        $stmt = $this->conn->prepare($query);
-        $result = $stmt->execute([$post_id, $user_id, $content]);
-        
-        if ($result) {
-            // Get post title for notification
-            $post_query = "SELECT title FROM posts WHERE id = ?";
-            $post_stmt = $this->conn->prepare($post_query);
-            $post_stmt->execute([$post_id]);
-            $post_data = $post_stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($post_data) {
-                // Create notification for comment submission
-                require_once 'Notification.php';
-                $notification = new Notification($this->conn);
-                $notification->createCommentSubmittedNotification($user_id, $post_data['title']);
-            }
+    $query = "INSERT INTO " . $this->table_name . " (post_id, user_id, content, status) 
+              VALUES (?, ?, ?, 'pending')";
+    $stmt = $this->conn->prepare($query);
+    $result = $stmt->execute([$post_id, $user_id, $content]);
+
+    if ($result) {
+        // Get post title for notification
+        $post_query = "SELECT title FROM posts WHERE id = ?";
+        $post_stmt = $this->conn->prepare($post_query);
+        $post_stmt->execute([$post_id]);
+        $post_data = $post_stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($post_data) {
+            require_once 'Notification.php';
+            $notification = new Notification($this->conn);
+            $notification->createCommentSubmittedNotification($user_id, $post_data['title']);
         }
-        
-        return $result;
+    }
+
+    return $result;
     }
 
     public function createWithMedia($post_id, $user_id, $content) {
-        $query = "INSERT INTO " . $this->table_name . " (post_id, user_id, content) VALUES (?, ?, ?)";
-        $stmt = $this->conn->prepare($query);
-        $result = $stmt->execute([$post_id, $user_id, $content]);
-        
-        if ($result) {
-            // Get post title for notification
-            $post_query = "SELECT title FROM posts WHERE id = ?";
-            $post_stmt = $this->conn->prepare($post_query);
-            $post_stmt->execute([$post_id]);
-            $post_data = $post_stmt->fetch(PDO::FETCH_ASSOC);
-            
-            if ($post_data) {
-                // Create notification for comment submission
-                require_once 'Notification.php';
-                $notification = new Notification($this->conn);
-                $notification->createCommentSubmittedNotification($user_id, $post_data['title']);
-            }
+    $query = "INSERT INTO " . $this->table_name . " (post_id, user_id, content, status) 
+              VALUES (?, ?, ?, 'pending')";
+    $stmt = $this->conn->prepare($query);
+    $result = $stmt->execute([$post_id, $user_id, $content]);
+
+    if ($result) {
+        $post_query = "SELECT title FROM posts WHERE id = ?";
+        $post_stmt = $this->conn->prepare($post_query);
+        $post_stmt->execute([$post_id]);
+        $post_data = $post_stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($post_data) {
+            require_once 'Notification.php';
+            $notification = new Notification($this->conn);
+            $notification->createCommentSubmittedNotification($user_id, $post_data['title']);
         }
-        
-        return $result;
     }
+
+    return $result;
+}
+
 
     public function update($id, $content) {
         // When updating, set status back to pending for admin review
@@ -88,16 +88,17 @@ class Comment {
 
 
     public function getPendingComments() {
-        $query = "SELECT c.*, u.username, p.title as post_title 
-                  FROM " . $this->table_name . " c 
-                  JOIN users u ON c.user_id = u.id 
-                  JOIN posts p ON c.post_id = p.id 
-                  WHERE c.status = 'pending' 
-                  ORDER BY c.created_at ASC";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    $query = "SELECT c.*, u.username, u.avatar, p.title as post_title 
+              FROM " . $this->table_name . " c 
+              JOIN users u ON c.user_id = u.id 
+              JOIN posts p ON c.post_id = p.id 
+              WHERE c.status = 'pending' 
+              ORDER BY c.created_at ASC";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 
     public function delete($id) {
         // Get comment details for notification before deletion

@@ -24,7 +24,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if($login_result) {
             if($login_result['status'] === 'banned') {
-                $error = 'Your account has been banned';
+                $error = 'Your account has been banned. Please contact the Administrator for more information.';
             } else {
                 $_SESSION['user_id'] = $login_result['id'];
                 $_SESSION['username'] = $login_result['username'];

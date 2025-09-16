@@ -127,7 +127,7 @@ if(($profile_data['status'] === 'limited' || $profile_data['status'] === 'banned
                                                 <?php if($is_own_profile): ?>
                                                     <div class="profile-post-actions" onclick="event.stopPropagation();">
                                                         <a href="edit-post.php?id=<?php echo $post_item['id']; ?>" class="btn btn-edit">Edit</a>
-                                                        <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?'); setTimeout(function(){ location.reload(); }, 100);">
+                                                        <form method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this post?')">
                                                             <input type="hidden" name="action" value="delete_post">
                                                             <input type="hidden" name="post_id" value="<?php echo $post_item['id']; ?>">
                                                             <button type="submit" class="btn btn-delete">Delete</button>
@@ -193,7 +193,8 @@ if(($profile_data['status'] === 'limited' || $profile_data['status'] === 'banned
             $post_id = (int)$_POST['post_id'];
             if($post->canUserEdit($post_id, getUserId()) || isAdmin()) {
                 $post->delete($post_id);
-                echo "window.location.reload();";
+                header("Location: " . $_SERVER['REQUEST_URI']);
+            exit;
             }
             ?>
         <?php endif; ?>

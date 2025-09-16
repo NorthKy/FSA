@@ -127,27 +127,29 @@ $has_more = ($offset + $posts_per_page) < $total_posts;
                                 </h2>
                                 
                                 <div class="post-excerpt">
-                                    <?php 
+                                <?php 
                                     // Parse BBCode for preview and limit to 40-50 words
-                                    $content = $post_item['content'];
+                                    $content = $post_item['content'] ?? "";
+
                                     // Remove BBCode tags for preview
-                                    $content = preg_replace('/\[img\](.*?)\[\/img\]/gi', '[Image]', $content);
-                                    $content = preg_replace('/\[b\](.*?)\[\/b\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[i\](.*?)\[\/i\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[u\](.*?)\[\/u\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[url=(.*?)\](.*?)\[\/url\]/gi', '$2', $content);
-                                    $content = preg_replace('/\[url\](.*?)\[\/url\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[h[1-3]\](.*?)\[\/h[1-3]\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[centre\](.*?)\[\/centre\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[center\](.*?)\[\/center\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[box\](.*?)\[\/box\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[color=(.*?)\](.*?)\[\/color\]/gi', '$2', $content);
-                                    $content = preg_replace('/\[notice\](.*?)\[\/notice\]/gi', '$1', $content);
-                                    $content = preg_replace('/\[ul\](.*?)\[\/ul\]/gis', '$1', $content);
-                                    $content = preg_replace('/\[ol\](.*?)\[\/ol\]/gis, '$1', $content);
-                                    $content = preg_replace('/\[li\](.*?)\[\/li\]/gi', '• $1', $content);
+                                    $content = preg_replace('/\[img\](.*?)\[\/img\]/is', '[Image]', $content);
+                                    $content = preg_replace('/\[b\](.*?)\[\/b\]/is', '$1', $content);
+                                    $content = preg_replace('/\[i\](.*?)\[\/i\]/is', '$1', $content);
+                                    $content = preg_replace('/\[u\](.*?)\[\/u\]/is', '$1', $content);
+                                    $content = preg_replace('/\[url=(.*?)\](.*?)\[\/url\]/is', '$2', $content);
+                                    $content = preg_replace('/\[url\](.*?)\[\/url\]/is', '$1', $content);
+                                    $content = preg_replace('/\[h[1-3]\](.*?)\[\/h[1-3]\]/is', '$1', $content);
+                                    $content = preg_replace('/\[centre\](.*?)\[\/centre\]/is', '$1', $content);
+                                    $content = preg_replace('/\[center\](.*?)\[\/center\]/is', '$1', $content);
+                                    $content = preg_replace('/\[box\](.*?)\[\/box\]/is', '$1', $content);
+                                    $content = preg_replace('/\[color=(.*?)\](.*?)\[\/color\]/is', '$2', $content);
+                                    $content = preg_replace('/\[notice\](.*?)\[\/notice\]/is', '$1', $content);
+                                    $content = preg_replace('/\[ul\](.*?)\[\/ul\]/is', '$1', $content);
+                                    $content = preg_replace('/\[ol\](.*?)\[\/ol\]/is', '$1', $content);
+                                    $content = preg_replace('/\[li\](.*?)\[\/li\]/is', '• $1', $content);
+
                                     $content = strip_tags($content);
-                                    
+
                                     // Limit to 40-50 words
                                     $words = explode(' ', $content);
                                     if (count($words) > 45) {

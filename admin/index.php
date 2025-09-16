@@ -120,25 +120,31 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="item-header">
                                     <div class="item-header-left">
                                         <div class="author-info-admin">
-                                            <img src="../assets/images/avatars/default-avatar.png" alt="<?php echo htmlspecialchars($post_item['username']); ?>">
+                                        <img src="../assets/images/avatars/<?php echo htmlspecialchars($post_item['avatar']); ?>" alt="<?php echo htmlspecialchars($post_item['username']); ?>">
                                             <div class="author-details">
                                                 <h4><?php echo htmlspecialchars($post_item['username']); ?></h4>
                                                 <span class="author-role">Author</span>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <h3><?php echo htmlspecialchars($post_item['title']); ?></h3>
                                         </div>
                                     </div>
                                     <div class="item-header-right">
                                         <span>Submitted: <?php echo formatDate($post_item['created_at']); ?></span>
                                     </div>
                                 </div>
+                                <h3><?php echo htmlspecialchars($post_item['title']); ?></h3>
+                                <div class="spacer"></div>
                                 <div class="item-content">
                                     <?php echo substr(strip_tags($post_item['content']), 0, 200) . '...'; ?>
                                 </div>
                                 <div class="item-actions">
-                                    <button onclick="showPostDetails(<?php echo $post_item['id']; ?>, '<?php echo addslashes(htmlspecialchars($post_item['title'])); ?>', '<?php echo addslashes(htmlspecialchars($post_item['content'])); ?>', '<?php echo htmlspecialchars($post_item['username']); ?>', '<?php echo formatDate($post_item['created_at']); ?>')" class="btn-view-details">View Details</button>
+                                    <div class="item-actions">
+                                    <button class="btn-view-details"
+                                    data-id="<?php echo $post_item['id']; ?>"
+                                    data-title="<?php echo htmlspecialchars($post_item['title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-content="<?php echo htmlspecialchars($post_item['content'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-author="<?php echo htmlspecialchars($post_item['username'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-date="<?php echo htmlspecialchars(formatDate($post_item['created_at']), ENT_QUOTES, 'UTF-8'); ?>">View Details</button>
+                                </div>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="action" value="approve_post">
                                         <input type="hidden" name="id" value="<?php echo $post_item['id']; ?>">
@@ -167,25 +173,29 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="item-header">
                                     <div class="item-header-left">
                                         <div class="author-info-admin">
-                                            <img src="../assets/images/avatars/default-avatar.png" alt="<?php echo htmlspecialchars($comment_item['username']); ?>">
+                                            <img src="../assets/images/avatars/<?php echo htmlspecialchars($comment_item['avatar']); ?>" alt="<?php echo htmlspecialchars($comment_item['username']); ?>">
                                             <div class="author-details">
                                                 <h4><?php echo htmlspecialchars($comment_item['username']); ?></h4>
                                                 <span class="author-role">Commenter</span>
                                             </div>
-                                        </div>
-                                        <div>
-                                            <h3>Comment on "<?php echo htmlspecialchars($comment_item['post_title']); ?>"</h3>
                                         </div>
                                     </div>
                                     <div class="item-header-right">
                                         <span>Submitted: <?php echo formatDate($comment_item['created_at']); ?></span>
                                     </div>
                                 </div>
+                                <h3>Comment on "<?php echo htmlspecialchars($comment_item['post_title']); ?>"</h3>
+                                <div class="spacer"></div>
                                 <div class="item-content">
-                                    <?php echo htmlspecialchars($comment_item['content']); ?>
+                                    <?php echo htmlspecialchars($comment_item['content'], ENT_QUOTES, 'UTF-8'); ?>
                                 </div>
                                 <div class="item-actions">
-                                    <button onclick="showCommentDetails('<?php echo addslashes(htmlspecialchars($comment_item['content'])); ?>', '<?php echo htmlspecialchars($comment_item['username']); ?>', '<?php echo htmlspecialchars($comment_item['post_title']); ?>', '<?php echo formatDate($comment_item['created_at']); ?>')" class="btn-view-details">View Details</button>
+                                 <button class="btn-view-details"
+                                 data-content="<?php echo htmlspecialchars($comment_item['content'], ENT_QUOTES, 'UTF-8'); ?>"
+                                 data-author="<?php echo htmlspecialchars($comment_item['username'], ENT_QUOTES, 'UTF-8'); ?>"
+                                 data-posttitle="<?php echo htmlspecialchars($comment_item['post_title'], ENT_QUOTES, 'UTF-8'); ?>"
+                                 data-date="<?php echo htmlspecialchars(formatDate($comment_item['created_at']), ENT_QUOTES, 'UTF-8'); ?>"
+                                 onclick="showCommentDetails(this)">View Details</button>
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="action" value="approve_comment">
                                         <input type="hidden" name="id" value="<?php echo $comment_item['id']; ?>">
@@ -259,7 +269,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <form method="POST" style="display: inline;">
                                         <input type="hidden" name="action" value="limit_user">
                                         <input type="hidden" name="id" value="<?php echo $user_item['id']; ?>">
-                                        <select name="user_status" onchange="if(confirm('Are you sure you want to change this user\'s status?')) { this.form.submit(); } else { this.selectedIndex = Array.from(this.options).findIndex(option => option.value === '<?php echo $user_item['status']; ?>'); }">
+                                        <select name="user_status">
                                             <option value="active" <?php echo $user_item['status'] === 'active' ? 'selected' : ''; ?>>Active</option>
                                             <option value="limited" <?php echo $user_item['status'] === 'limited' ? 'selected' : ''; ?>>Limited</option>
                                             <option value="banned" <?php echo $user_item['status'] === 'banned' ? 'selected' : ''; ?>>Banned</option>
@@ -303,22 +313,41 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             `;
             document.getElementById('detailsModal').style.display = 'flex';
         }
+
+    document.querySelectorAll('.btn-view-details').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const title = btn.dataset.title;
+        const content = btn.dataset.content || "";
+        const author = btn.dataset.author;
+        const date = btn.dataset.date;
+
+        showPostDetails(id, title, content, author, date);
+    });
+});
+
         
-        function showCommentDetails(content, author, postTitle, date) {
-            document.getElementById('modalTitle').textContent = 'Comment Details';
-            document.getElementById('modalBody').innerHTML = `
-                <h4>Author:</h4>
-                <p>${author}</p>
-                <h4>Post:</h4>
-                <p>${postTitle}</p>
-                <h4>Submitted:</h4>
-                <p>${date}</p>
-                <h4>Comment:</h4>
-                <div class="content-preview">${content.replace(/\n/g, '<br>')}</div>
-            `;
-            document.getElementById('detailsModal').style.display = 'flex';
-        }
-        
+    function showCommentDetails(button) {
+    const content = button.dataset.content;
+    const author = button.dataset.author;
+    const postTitle = button.dataset.posttitle;
+    const date = button.dataset.date;
+
+    document.getElementById('modalTitle').textContent = 'Comment Details';
+    document.getElementById('modalBody').innerHTML = `
+        <h4>Author:</h4>
+        <p>${author}</p>
+        <h4>Post:</h4>
+        <p>${postTitle}</p>
+        <h4>Submitted:</h4>
+        <p>${date}</p>
+        <h4>Comment:</h4>
+        <div class="content-preview">${content.replace(/\n/g, '<br>')}</div>
+    `;
+    document.getElementById('detailsModal').style.display = 'flex';
+    }
+
+   
         function closeModal() {
             document.getElementById('detailsModal').style.display = 'none';
         }
